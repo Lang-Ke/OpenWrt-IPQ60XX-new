@@ -9,7 +9,6 @@ env:
   REPO_URL: https://github.com/immortalwrt/immortalwrt.git
   REPO_BRANCH: openwrt-24.10
   CONFIG_FILE: configs/x86-64.config
-  FEEDS_FILE: feeds/x86-64.txt
   DIY_SCRIPT: diy-script.sh
   CLASH_KERNEL: amd64
   CACHE_TOOLCHAIN: true
@@ -73,7 +72,6 @@ jobs:
     - name: Generate Variables(生成变量)
       run: |
         cp $CONFIG_FILE $OPENWRT_PATH/.config
-        cp $FEEDS_FILE $OPENWRT_PATH/feeds.conf.default
         cd $OPENWRT_PATH
         make defconfig > /dev/null 2>&1
         SOURCE_REPO="$(echo $REPO_URL | awk -F '/' '{print $(NF)}')"
@@ -98,6 +96,7 @@ jobs:
         git clone --depth 1 https://github.com/xiaorouji/openwrt-passwall.git feeds/passwall
         git clone --depth 1 https://github.com/breeze303/luci-app-lucky package/lucky
         git clone --depth 1 https://github.com/QiuSimons/luci-app-daed.git package/daed
+        git clone --depth 1 https://github.com/nikkinikki-org/OpenWrt-nikki.git package/nik
         rm -rf feeds/luci/applications/luci-app-passwall
         rm -rf feeds/luci/applications/luci-app-daed
         rm -rf feeds/packages/net/daed
