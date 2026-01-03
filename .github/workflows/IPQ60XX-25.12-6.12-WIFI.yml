@@ -14,7 +14,7 @@ env:
   CACHE_TOOLCHAIN: true
   UPLOAD_BIN_DIR: false
   FIRMWARE_RELEASE: true
-  FIRMWARE_TAG: IPQ60XX-24.10-6.12-WIFI
+  FIRMWARE_TAG: IPQ60XX-25.12-6.12-WIFI
   TZ: Asia/Shanghai
 
 jobs:
@@ -179,7 +179,7 @@ jobs:
         artifacts: ${{ env.FIRMWARE_PATH }}/*
         body: |
           **This is OpenWrt Firmware for ${{ env.FIRMWARE_TAG }}**
-          ### 📒 固件信息24.10(WIFI)
+          ### 📒 固件信息25.12(WIFI)
           - 带WIFI带有线NSS的6.12内核固件
           - 💻 这是 ${{ env.FIRMWARE_TAG }} 平台使用的 OpenWrt 固件
           - ⚽ 固件源码: ${{ env.REPO_URL }}
