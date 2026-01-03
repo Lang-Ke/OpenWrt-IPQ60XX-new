@@ -129,16 +129,37 @@ jobs:
         name: ${{ env.SOURCE_REPO }}-bin-${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}-${{ env.FILE_DATE }}
         path: ${{ env.OPENWRT_PATH }}/bin
 
-    - name: Organize Files(整理文件)
+    - name: Organize Files (整理文件 - 仅固件)
       if: steps.compile.outputs.status == 'success'
       run: |
+        echo "========================================"
+        echo "  整理固件文件 (跳过软件包打包)"
+        echo "========================================"
+        
+        # 1. 进入固件目录
         cd $OPENWRT_PATH/bin/targets/*/*
+        echo "固件目录: $PWD"
+        
+        # 2. 显示校验和并保存编译配置
+        echo "固件校验和:"
         cat sha256sums
         cp $OPENWRT_PATH/.config build.config
-        mv -f $OPENWRT_PATH/bin/packages/*/*/*.ipk packages
-        tar -zcf Packages.tar.gz packages
-        rm -rf packages feeds.buildinfo version.buildinfo
+        echo "✅ 已保存编译配置: build.config"
+        
+        # 3. 【关键】完全跳过 .ipk/.apk 相关操作
+        echo "跳过软件包打包，仅保留固件文件"
+        
+        # 4. 清理中间文件（可选，保持目录整洁）
+        echo "清理中间文件..."
+        rm -rf feeds.buildinfo version.buildinfo 2>/dev/null || true
+        
+        # 5. 设置环境变量供后续上传步骤使用
         echo "FIRMWARE_PATH=$PWD" >> $GITHUB_ENV
+        
+        # 6. 显示最终文件列表
+        echo "生成的固件文件:"
+        ls -lh *.bin *.ubi *.manifest 2>/dev/null | head -10
+        echo "========================================"
 
     - name: Upload Firmware To Artifact(将固件上传到Artifact)
       if: steps.compile.outputs.status == 'success' && env.FIRMWARE_RELEASE != 'true'
